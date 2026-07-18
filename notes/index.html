@@ -506,6 +506,124 @@
         </select>
       </div>
 
+      <!-- Tag Filter -->
+      <div class="form-control">
+        <select class="select select-bordered" id="tagFilter" name="tagFilter">
+          <option value="">All Tags (55)</option>
+          
+            <option value="APM">APM (1)</option>
+          
+            <option value="ASP.NET Core">ASP.NET Core (1)</option>
+          
+            <option value="BigQuery">BigQuery (1)</option>
+          
+            <option value="C#">C# (3)</option>
+          
+            <option value="CSS">CSS (1)</option>
+          
+            <option value="Datadog">Datadog (1)</option>
+          
+            <option value="FastAPI">FastAPI (1)</option>
+          
+            <option value="GCP">GCP (2)</option>
+          
+            <option value="GoF23">GoF23 (24)</option>
+          
+            <option value="Golang">Golang (2)</option>
+          
+            <option value="Golang GraphQL">Golang GraphQL (1)</option>
+          
+            <option value="Golang dep">Golang dep (1)</option>
+          
+            <option value="HMR">HMR (1)</option>
+          
+            <option value="IntelliJ IDEA">IntelliJ IDEA (1)</option>
+          
+            <option value="JavaScript">JavaScript (1)</option>
+          
+            <option value="Next.js">Next.js (1)</option>
+          
+            <option value="Node.js">Node.js (1)</option>
+          
+            <option value="PHP">PHP (1)</option>
+          
+            <option value="PHP8">PHP8 (1)</option>
+          
+            <option value="Pub/Sub">Pub/Sub (1)</option>
+          
+            <option value="Python">Python (1)</option>
+          
+            <option value="React">React (2)</option>
+          
+            <option value="React Hooks">React Hooks (1)</option>
+          
+            <option value="Redis">Redis (1)</option>
+          
+            <option value="Tailwind">Tailwind (1)</option>
+          
+            <option value="TypeScript">TypeScript (1)</option>
+          
+            <option value="Webpack">Webpack (2)</option>
+          
+            <option value="async">async (1)</option>
+          
+            <option value="defer">defer (1)</option>
+          
+            <option value="goroutine">goroutine (1)</option>
+          
+            <option value="record">record (1)</option>
+          
+            <option value="useEffect">useEffect (1)</option>
+          
+            <option value="依赖注入">依赖注入 (1)</option>
+          
+            <option value="偏自相关函数">偏自相关函数 (1)</option>
+          
+            <option value="创建型模式">创建型模式 (7)</option>
+          
+            <option value="前端">前端 (2)</option>
+          
+            <option value="后端">后端 (1)</option>
+          
+            <option value="季节分解法">季节分解法 (2)</option>
+          
+            <option value="广告">广告 (3)</option>
+          
+            <option value="库存季节管理">库存季节管理 (1)</option>
+          
+            <option value="性能优化">性能优化 (2)</option>
+          
+            <option value="性能排查">性能排查 (3)</option>
+          
+            <option value="数据分析">数据分析 (1)</option>
+          
+            <option value="死锁">死锁 (1)</option>
+          
+            <option value="消息队列">消息队列 (1)</option>
+          
+            <option value="监控">监控 (1)</option>
+          
+            <option value="类型比较">类型比较 (1)</option>
+          
+            <option value="结构型模式">结构型模式 (8)</option>
+          
+            <option value="缓存">缓存 (1)</option>
+          
+            <option value="网络API开发">网络API开发 (1)</option>
+          
+            <option value="网络协议">网络协议 (1)</option>
+          
+            <option value="自相关性函数">自相关性函数 (1)</option>
+          
+            <option value="行为型模式">行为型模式 (1)</option>
+          
+            <option value="行为模式">行为模式 (8)</option>
+          
+            <option value="语言特性">语言特性 (1)</option>
+          
+        </select>
+      </div>
+
       <!-- Search -->
       <div class="form-control flex-1">
         <input type="text" placeholder="Search notes..." class="input input-bordered" id="searchInput" />
@@ -515,6 +633,8 @@
     <!-- Results Count -->
     <div class="mt-2 text-sm opacity-70">
       <span id="resultsCount">Showing all 53 notes</span>
+      <span class="mx-1">·</span>
+      <span>55 topics tagged</span>
     </div>
 
     <!-- Search suggestions (hidden by default) -->
@@ -3596,6 +3716,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('searchInput');
   const categoryFilter = document.getElementById('categoryFilter');
   const yearFilter = document.getElementById('yearFilter');
+  const tagFilter = document.getElementById('tagFilter');
   const resultsCount = document.getElementById('resultsCount');
   const noteItems = document.querySelectorAll('.note-item');
 
@@ -3618,7 +3739,10 @@ document.addEventListener('DOMContentLoaded', function() {
   if (categoryParam) {
     categoryFilter.value = categoryParam;
   }
-  
+  if (tagParam) {
+    tagFilter.value = tagParam;
+  }
+
   // Initial filter
   filterPosts();
 
@@ -3656,23 +3780,18 @@ document.addEventListener('DOMContentLoaded', function() {
   function filterPosts() {
     const categoryVal = categoryFilter.value;
     const yearVal = yearFilter.value;
+    const tagVal = tagFilter.value;
     const searchVal = searchInput.value.toLowerCase().trim();
-    const urlParams = new URLSearchParams(window.location.search);
-    const tagParam = urlParams.get('tag');
-    
+
     let visibleCount = 0;
 
     allPosts.forEach(post => {
       const matchesCategory = !categoryVal || post.categories.includes(categoryVal);
       const matchesYear = !yearVal || post.year === yearVal;
-      
+
       // Check if post matches tag filter
-      let matchesTag = !tagParam;
-      if (tagParam) {
-        // Use the tags data from the post data
-        matchesTag = post.tags.some(tag => tag.trim() === tagParam.trim());
-      }
-      
+      const matchesTag = !tagVal || post.tags.some(tag => tag.trim() === tagVal.trim());
+
       // Search functionality
       let matchesSearch = true;
       if (searchVal.length >= 2) {
@@ -3713,6 +3832,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize filters
   categoryFilter.addEventListener('change', filterPosts);
   yearFilter.addEventListener('change', filterPosts);
+  tagFilter.addEventListener('change', filterPosts);
   searchInput.addEventListener('input', debounce(filterPosts, 300));
 
   // Debounce function for search
